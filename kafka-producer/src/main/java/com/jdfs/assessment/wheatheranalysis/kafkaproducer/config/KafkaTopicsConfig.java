@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
-@Configuration
+// @Configuration
 public class KafkaTopicsConfig {
 
     @Value("${app.kafka-topic.publisher.name}")
@@ -14,6 +14,6 @@ public class KafkaTopicsConfig {
 
     @Bean
     public NewTopic publisherTopic() {
-        return TopicBuilder.name(publisherTopicName).build();
+        return TopicBuilder.name(publisherTopicName).partitions(2).build();
     }
 }

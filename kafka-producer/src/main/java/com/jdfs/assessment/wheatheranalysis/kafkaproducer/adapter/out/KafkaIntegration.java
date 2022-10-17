@@ -22,16 +22,12 @@ class KafkaIntegration implements PostTopicPort {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Override
-    public void postTopic(final Publisher data) throws RuntimeException  {
+    public void postTopic(final Publisher data) throws JsonProcessingException {
         final ObjectMapper mapper = new ObjectMapper();
-        try {
-            final String content = mapper.writeValueAsString(data);
-            final ProducerRecord<String, String> record = new ProducerRecord<>(
-                    publisherTopicName, UUID.randomUUID().toString(), content
-            );
-            kafkaTemplate.send(record);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        final String content = mapper.writeValueAsString(data);
+        final ProducerRecord<String, String> record = new ProducerRecord<>(
+                publisherTopicName, UUID.randomUUID().toString(), content
+        );
+        kafkaTemplate.send(record);
     }
 }

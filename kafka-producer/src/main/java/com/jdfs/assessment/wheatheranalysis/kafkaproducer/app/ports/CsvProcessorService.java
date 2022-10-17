@@ -1,7 +1,9 @@
 package com.jdfs.assessment.wheatheranalysis.kafkaproducer.app.ports;
 
 import com.jdfs.assessment.wheatheranalysis.kafkaproducer.app.ports.in.ProcessCsvUseCase;
+import com.jdfs.assessment.wheatheranalysis.kafkaproducer.app.ports.out.PostTopicPort;
 import com.jdfs.assessment.wheatheranalysis.kafkaproducer.domain.Publisher;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,32 +13,27 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 class CsvProcessorService implements ProcessCsvUseCase {
 
+    private final PostTopicPort postTopicPort;
+
     @Override
-    public void processCsvFile(final String filename, final String separator,
-                               final Consumer<Publisher> itemConsumer) throws IOException {
+    public void processCsvFile(final String filename, final String separator) throws IOException {
 
         final Path csvFilePath = Paths.get(URI.create(filename));
         try (
                 BufferedReader reader = Files.newBufferedReader(csvFilePath)
         ) {
-            final String[] csvHeader = reader.readLine().split(separator);
+            final String sourceName = csvFilePath.toFile().getName().replace(".csv", "");
+            final String csvHeader = reader.readLine();
             String csvLine = null;
             while ((csvLine = reader.readLine()) != null) {
-                final Map<String, String> lineContent = new HashMap<>();
-                final String[] values = csvLine.split(separator);
-                for (int i = 0; i < values.length; i++) {
-                    lineContent.put(csvHeader[i], values[i]);
-                }
-                final Publisher publisher = new Publisher(csvFilePath.toFile().getName(), lineContent);
-                itemConsumer.accept(publisher);
+                final Publisher publisher = new Publisher(sourceName, csvHeader, csvLine);
+                postTopicPort.postTopic(publisher);
             }
         }
     }

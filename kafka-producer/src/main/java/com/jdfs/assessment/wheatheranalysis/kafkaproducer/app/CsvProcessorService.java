@@ -1,4 +1,4 @@
-package com.jdfs.assessment.wheatheranalysis.kafkaproducer.app.ports;
+package com.jdfs.assessment.wheatheranalysis.kafkaproducer.app;
 
 import com.jdfs.assessment.wheatheranalysis.kafkaproducer.app.ports.in.ProcessCsvUseCase;
 import com.jdfs.assessment.wheatheranalysis.kafkaproducer.app.ports.out.PostTopicPort;

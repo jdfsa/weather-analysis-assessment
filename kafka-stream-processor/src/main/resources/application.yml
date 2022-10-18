@@ -1,0 +1,70 @@
+spring:
+  application.name: weather-stream-processor
+
+  kafka:
+    streams:
+      bootstrap-servers: localhost:9092
+      application-id: ${spring.application.name}
+
+  cloud.stream:
+    function.definition: weatherProcessor
+    default.group: publisher-group
+    bidings:
+      weatherProcessor-in-0:
+        destination: weather-publisher-data
+      weatherProcessor-output-weather-data-city-attributes:
+        destination: weather-data-city-attributes
+      weatherProcessor-output-weather-data-humidity:
+        destination: weather-data-humidity
+      weatherProcessor-output-weather-data-pressure:
+        destination: weather-data-pressure
+      weatherProcessor-output-weather-data-temperature:
+        destination: weather-data-temperature
+      weatherProcessor-output-weather-data-description:
+        destination: weather-data-description
+      weatherProcessor-output-weather-data-wind-direction:
+        destination: weather-data-wind-direction
+      weatherProcessor-output-weather-data-wind-speed:
+        destination: weather-data-wind-speed
+    kafka:
+      streams.binder.brokers: localhost:9092
+      binders:
+        weatherProcessor-in-0:
+          consumer:
+            resetOffsets: true
+            startOffset: earliest
+            configuration.value:
+              deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+        weatherProcessor-output-weather-data-city-attributes:
+          consumer.configuration.value:
+            serializer: org.springframework.kafka.support.serializer.JsonSerializer
+        weatherProcessor-output-weather-data-humidity:
+          consumer.configuration.value:
+            serializer: org.springframework.kafka.support.serializer.JsonSerializer
+        weatherProcessor-output-weather-data-pressure:
+          consumer.configuration.value:
+            serializer: org.springframework.kafka.support.serializer.JsonSerializer
+        weatherProcessor-output-weather-data-temperature:
+          consumer.configuration.value:
+            serializer: org.springframework.kafka.support.serializer.JsonSerializer
+        weatherProcessor-output-weather-data-description:
+          consumer.configuration.value:
+            serializer: org.springframework.kafka.support.serializer.JsonSerializer
+        weatherProcessor-output-weather-data-wind-direction:
+          consumer.configuration.value:
+            serializer: org.springframework.kafka.support.serializer.JsonSerializer
+        weatherProcessor-output-weather-data-wind-speed:
+          consumer.configuration.value:
+            serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+app.kafka-topics:
+  source-topic-name: weather-publisher-data
+  source-destination-stream-map: '{
+    "city_attributes": "weather-data-city-attributes",
+    "humidity": "weather-data-humidity",
+    "pressure": "weather-data-pressure",
+    "temperature": "weather-data-temperature",
+    "weather_description": "weather-data-description",
+    "wind_direction": "weather-data-wind-direction",
+    "wind_speed": "weather-data-wind-speed"
+  }'

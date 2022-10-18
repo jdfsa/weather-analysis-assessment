@@ -1,13 +1,14 @@
 package com.jdfs.assessment.wheatheranalysis.kafkastreamprocessor.domain;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.Map;
 
 @Getter
-@RequiredArgsConstructor
-public class WeatherOutput implements Serializable {
-    private final Map<String, String> data;
+@Setter
+public class WeatherInput implements Serializable {
+    private String source;
+    private String headers;
+    private String content;
 }

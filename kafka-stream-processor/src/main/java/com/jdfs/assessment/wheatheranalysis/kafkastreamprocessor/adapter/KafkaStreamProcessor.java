@@ -8,6 +8,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.Produced;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +26,16 @@ class KafkaStreamProcessor {
 
     private final StreamsBuilder streamsBuilder;
 
+    @Value("${app.source-topic-name}")
+    private String sourceTopic;
+
+    @Value("#{${app.source-destination-stream-map}}")
+    private Map<String, String> sourceDestinationMapping;
+
     @PostConstruct
     public void streamTopoloty() {
-        final var streamMap = streamsBuilder.stream("weather-publisher-data",
-                        Consumed.with(Serdes.String(), new JsonSerde<>(WeatherInput.class)))
+        final var streamMap = streamsBuilder
+                .stream(sourceTopic, Consumed.with(Serdes.String(), new JsonSerde<>(WeatherInput.class)))
                 .mapValues((key, value) -> {
                     final String[] headers = value.getHeaders().split(FIELD_SEPARATOR);
                     final Map<String, String> data = new HashMap<>();
@@ -42,20 +49,11 @@ class KafkaStreamProcessor {
                     return output;
                 });
 
-        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "city_attributes"))
-                .to("weather-data-city-attributes", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
-        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "humidity"))
-                .to("weather-data-humidity", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
-        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "pressure"))
-                .to("weather-data-pressure", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
-        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "temperature"))
-                .to("weather-data-temperature", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
-        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "weather_description"))
-                .to("weather-data-description", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
-        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "wind_direction"))
-                .to("weather-data-wind-direction", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
-        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "wind_speed"))
-                .to("weather-data-wind-speed", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
+        for (final Map.Entry<String, String> entry : sourceDestinationMapping.entrySet()) {
+            streamMap
+                    .filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), entry.getKey()))
+                    .to(entry.getValue(), Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
+        }
     }
 
 }

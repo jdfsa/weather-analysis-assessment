@@ -21,15 +21,15 @@ public class KafkaTopicsConfig {
 
     private final ApplicationContext context;
 
-    @Value("${app.kafka-topics.source-topic-name}")
+    @Value("${app.source-topic-name}")
     private String publisherTopicName;
 
-    @Value("#{${app.kafka-topics.source-destination-stream-map}}")
-    private Map<String, String> sourceTopicMap;
+    @Value("#{${app.source-destination-stream-map}}")
+    private Map<String, String> sourceTopicMapping;
 
     @Bean
     public KafkaAdmin.NewTopics kafkaTopics() {
-        final List<NewTopic> topics = sourceTopicMap.entrySet().stream()
+        final List<NewTopic> topics = sourceTopicMapping.entrySet().stream()
                 .map(item -> TopicBuilder.name(item.getValue()).partitions(3).build())
                 .collect(Collectors.toList());
         topics.add(TopicBuilder.name(publisherTopicName).partitions(3).build());

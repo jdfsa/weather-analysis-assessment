@@ -7,7 +7,7 @@ spring:
     use.type.headers: false
     value.default.type: java.lang.String
 
-app.kafka-topics:
+app:
   source-topic-name: weather-publisher-data
   source-destination-stream-map: '{
     "city_attributes": "weather-data-city-attributes",

@@ -1,4 +1,4 @@
-package com.jdfs.assessment.wheatheranalysis.kafkastreamprocessor.domain;
+package com.jdfs.assessment.wheatheranalysis.kafkastreamprocessor.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

@@ -4,63 +4,58 @@ import com.jdfs.assessment.wheatheranalysis.kafkastreamprocessor.domain.WeatherI
 import com.jdfs.assessment.wheatheranalysis.kafkastreamprocessor.domain.WeatherOutput;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.streams.kstream.Branched;
-import org.apache.kafka.streams.kstream.KStream;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.Produced;
+import org.springframework.kafka.support.serializer.JsonSerde;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 
 @Slf4j
-@Configuration
+@Component
 @RequiredArgsConstructor
 class KafkaStreamProcessor {
 
     private static String FIELD_SEPARATOR = ",";
 
-    @Bean("weatherProcessor")
-    public Function<KStream<String, WeatherInput>, KStream<String, WeatherOutput>[]> weatherProcessor() {
-        return kstream -> {
-            var streamMap = kstream
-                    .mapValues((key, value) -> {
-                        final String[] headers = value.getHeaders().split(FIELD_SEPARATOR);
-                        final Map<String, String> data = new HashMap<>();
-                        final String[] values = value.getContent().split(FIELD_SEPARATOR);
-                        for (int i = 0; i < values.length; i++) {
-                            data.put(headers[i], values[i]);
-                        }
+    private final StreamsBuilder streamsBuilder;
 
-                        final WeatherOutput output = new WeatherOutput();
-                        output.setData(data);
-                        output.setOriginalInput(value);
-                        return output;
-                    })
-                    .split()
-                    .branch((key, output) -> Objects.equals(output.getOriginalInput(), "city_attributes"),
-                            Branched.as("output-weather-data-city-attributes"))
-                    .branch((key, output) -> Objects.equals(output.getOriginalInput(), "humidity"),
-                            Branched.as("output-weather-data-humidity"))
-                    .branch((key, output) -> Objects.equals(output.getOriginalInput(), "pressure"),
-                            Branched.as("output-weather-data-pressure"))
-                    .branch((key, output) -> Objects.equals(output.getOriginalInput(), "temperature"),
-                            Branched.as("output-weather-data-temperature"))
-                    .branch((key, output) -> Objects.equals(output.getOriginalInput(), "weather_description"),
-                            Branched.as("output-weather-data-description"))
-                    .branch((key, output) -> Objects.equals(output.getOriginalInput(), "wind_direction"),
-                            Branched.as("output-weather-data-wind-direction"))
-                    .branch((key, output) -> Objects.equals(output.getOriginalInput(), "wind_speed"),
-                            Branched.as("output-weather-data-wind-speed"))
-                    .noDefaultBranch();
+    @PostConstruct
+    public void streamTopoloty() {
+        final var streamMap = streamsBuilder.stream("weather-publisher-data",
+                        Consumed.with(Serdes.String(), new JsonSerde<>(WeatherInput.class)))
+                .mapValues((key, value) -> {
+                    final String[] headers = value.getHeaders().split(FIELD_SEPARATOR);
+                    final Map<String, String> data = new HashMap<>();
+                    final String[] values = value.getContent().split(FIELD_SEPARATOR);
+                    for (int i = 0; i < values.length; i++) {
+                        data.put(headers[i], values[i]);
+                    }
+                    final WeatherOutput output = new WeatherOutput();
+                    output.setData(data);
+                    output.setOriginalInput(value);
+                    return output;
+                });
 
-            for (final Map.Entry<String, KStream<String, WeatherOutput>> entry : streamMap.entrySet()) {
-                entry.getValue().to(entry.getKey());
-            }
-
-            return streamMap.values().stream().toArray(KStream[]::new);
-        };
+        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "city_attributes"))
+                .to("weather-data-city-attributes", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
+        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "humidity"))
+                .to("weather-data-humidity", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
+        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "pressure"))
+                .to("weather-data-pressure", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
+        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "temperature"))
+                .to("weather-data-temperature", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
+        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "weather_description"))
+                .to("weather-data-description", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
+        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "wind_direction"))
+                .to("weather-data-wind-direction", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
+        streamMap.filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), "wind_speed"))
+                .to("weather-data-wind-speed", Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
     }
 
 }

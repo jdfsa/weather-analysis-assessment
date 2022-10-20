@@ -1,5 +1,6 @@
 package com.jdfs.assessment.wheatheranalysis.kafkastreamprocessor.app;
 
+import com.jdfs.assessment.wheatheranalysis.kafkastreamprocessor.dto.WeatherData;
 import com.jdfs.assessment.wheatheranalysis.kafkastreamprocessor.dto.WeatherInput;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +21,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 class KafkaStreamProcessor {
 
-    private static String FIELD_SEPARATOR = ",";
-
     private final StreamsBuilder streamsBuilder;
-    private final WeatherInputOutputParser weatherParser;
 
     @Value("${app.source-topic-name}")
     private String sourceTopic;
@@ -39,22 +37,19 @@ class KafkaStreamProcessor {
                 // use JsonSerde to parse input data
                 .stream(sourceTopic, Consumed.with(Serdes.String(), new JsonSerde<>(WeatherInput.class)))
                 // map values to output format
-                .mapValues((key, value) -> weatherParser.parse(value))
+                .mapValues((key, value) -> new WeatherData(value.getContent(), value.getSource()))
                 // skip items having empty fields
-                .filter((key, value) -> value.getData().entrySet().stream()
-                        .allMatch(item -> StringUtils.isNotBlank(item.getValue())));
+                .filter((key, value) -> value.getDataAsStream().allMatch(data -> StringUtils.isNotBlank(data)));
 
         // determines the target for each stream
         for (final Map.Entry<String, String> destinationEntry : sourceDestinationMapping.entrySet()) {
             streamMap
                     // map to the correct destination
-                    .filter((key, output) -> Objects.equals(output.getOriginalInput().getSource(), destinationEntry.getKey()))
+                    .filter((key, output) -> Objects.equals(output.getSource(), destinationEntry.getKey()))
                     // drop headers and convert to csv format
-                    .mapValues((key, output) -> String.join(FIELD_SEPARATOR, output.getData().values()))
+                    .mapValues((key, output) -> output.getDataAsPlainText())
                     // determine the destination topic
                     .to(destinationEntry.getValue());
-
-            // .to(destinationEntry.getValue(), Produced.with(Serdes.String(), new JsonSerde<>(WeatherOutput.class)));
         }
     }
 

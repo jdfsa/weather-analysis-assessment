@@ -14,7 +14,7 @@
 	<name>KafkaStreamProcessor</name>
 	<description>Kafka processor used to clean incoming weather data and separate into multiple topics</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>1.8</java.version>
 		<spring-cloud.version>2021.0.4</spring-cloud.version>
 		<lombok.version>1.18.24</lombok.version>
 	</properties>
@@ -102,7 +102,9 @@
 					</annotationProcessorPaths>
 					<compilerArgs>
 						<arg>-sourcepath</arg>
-						<arg>${project.basedir}/src/main/java${path.separator}${project.basedir}/target/generated-sources/annotations${path.separator}/</arg>
+						<arg>
+							${project.basedir}/src/main/java${path.separator}${project.basedir}/target/generated-sources/annotations${path.separator}/
+						</arg>
 					</compilerArgs>
 				</configuration>
 			</plugin>

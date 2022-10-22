@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.KStream;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ class KafkaStreamProcessor {
     public void streamTopoloty() {
 
         // builds an stream
-        final var streamMap = streamsBuilder
+        final KStream<String, WeatherData> streamMap = streamsBuilder
                 // use JsonSerde to parse input data
                 .stream(sourceTopic, Consumed.with(Serdes.String(), new JsonSerde<>(WeatherInput.class)))
                 // map values to output format

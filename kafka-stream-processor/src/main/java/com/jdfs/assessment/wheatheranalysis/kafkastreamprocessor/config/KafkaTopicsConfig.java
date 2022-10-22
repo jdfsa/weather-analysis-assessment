@@ -33,7 +33,8 @@ public class KafkaTopicsConfig {
                 .map(item -> TopicBuilder.name(item.getValue()).partitions(3).build())
                 .collect(Collectors.toList());
         topics.add(TopicBuilder.name(publisherTopicName).partitions(3).build());
-        return new KafkaAdmin.NewTopics(topics.toArray(size -> new NewTopic[size]));
+        final NewTopic[] topicsArray = topics.toArray(new NewTopic[topics.size()]);
+        return new KafkaAdmin.NewTopics(topicsArray);
     }
 
 }

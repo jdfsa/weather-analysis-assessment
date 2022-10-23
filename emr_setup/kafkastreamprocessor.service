@@ -1,0 +1,13 @@
+[Unit]
+Description=Kafka Stream Processor
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ec2-user/weatheranalysis
+ExecStart=/etc/alternatives/jre/bin/java -jar /home/ec2-user/weatheranalysis/kafka-stream-processor-0.0.1.jar
+StandardOutput=file:/var/log/weather_analysis/kafka_stream_processor.out.log
+StandardError=file:/var/log/weather_analysis/kafka_stream_processor.err.log
+ExecStop=/bin/kill -15 $MAINPID
+
+[Install]
+WantedBy=multi-user.target

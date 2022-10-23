@@ -27,7 +27,7 @@ sudo ln -s apache-flume-1.10.1-bin /opt/flume
 export FLUME_HOME=/opt/flume
 export PATH=$PATH:${FLUME_HOME}/bin
 
-# configuring
+# configuring topics
 /opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic weather-publisher-data
 /opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic weather-data-city-attributes
 /opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic weather-data-humidity
@@ -36,7 +36,6 @@ export PATH=$PATH:${FLUME_HOME}/bin
 /opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic weather-data-description
 /opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic weather-data-wind-direction
 /opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic weather-data-wind-speed
-
 
 # downloading content
 aws s3 cp --recursive s3://$S3_BUCKET_NAME ./

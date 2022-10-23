@@ -44,8 +44,13 @@ sudo systemctl start kafkastreamprocessor.service
 sudo systemctl status kafkastreamprocessor.service
 
 # starting flume TO DO
-chmod u+x ./flume_setup/agent-run.sh
-./flume_setup/agent-run.sh
+sudo -u hdfs hadoop fs -mkdir -p /user/custom
+sudo -u hdfs hadoop fs -chmod 777 /user/custom
+sudo cp ./flume_setup/*.service /etc/systemd/system
+sudo systemctl start weather-investion-flume-agent.service
+sudo systemctl status weather-investion-flume-agent.service
+# chmod u+x ./flume_setup/agent-run.sh
+# ./flume_setup/agent-run.sh
 
 # starting producer
 java -jar ./kafka-producer-0.0.1.jar --separator=, --file=file:///home/ec2-user/weatheranalysis/dataset/city_attributes.csv

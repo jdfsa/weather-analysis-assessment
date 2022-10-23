@@ -1,0 +1,13 @@
+[Unit]
+Description=Weather Flume Agent
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ec2-user/weatheranalysis
+ExecStart=/home/ec2-user/weatheranalysis/flume_setup/agent-run.sh
+StandardOutput=file:/var/log/weather_analysis/flume-agent.out.log
+StandardError=file:/var/log/weather_analysis/flume-agent.err.log
+ExecStop=/bin/kill -15 $MAINPID
+
+[Install]
+WantedBy=multi-user.target

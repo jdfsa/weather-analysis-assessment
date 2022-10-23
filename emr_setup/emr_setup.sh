@@ -20,6 +20,13 @@ export KAFKA_HOME=/opt/kafka
 export PATH=$PATH:${KAFKA_HOME}/bin
 /opt/kafka/bin/kafka-server-start.sh -daemon /opt/kafka/config/server.properties
 
+wget https://dlcdn.apache.org/flume/1.10.1/apache-flume-1.10.1-bin.tar.gz
+tar xzf apache-flume-1.10.1-bin.tar.gz
+sudo mv -f apache-flume-1.10.1-bin /opt
+sudo ln -s apache-flume-1.10.1-bin /opt/flume
+export FLUME_HOME=/opt/flume
+export PATH=$PATH:${FLUME_HOME}/bin
+
 # configuring
 /opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic weather-publisher-data
 /opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic weather-data-city-attributes
@@ -41,7 +48,8 @@ sudo systemctl start kafkastreamprocessor.service
 sudo systemctl status kafkastreamprocessor.service
 
 # starting flume TO DO
-
+chmod u+x ./flume_setup/agent-run.sh
+./flume_setup/agent-run.sh
 
 # starting producer
 java -jar ./kafka-producer-0.0.1.jar --separator=, --file=file:///home/ec2-user/weatheranalysis/dataset/city_attributes.csv

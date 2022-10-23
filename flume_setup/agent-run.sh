@@ -1,0 +1,1 @@
+nohup /opt/flume/bin/flume-ng agent --conf-file /home/ec2-user/weatheranalysis/flume_setup/city_attributes_agent.conf --name city_attributes_agent -Dflume.root.logger=INFO,console

@@ -4,7 +4,6 @@
 # temp variables
 S3_BUCKET_NAME=weatheranalysistransient
 
-
 # installation
 
 mkdir weatheranalysis

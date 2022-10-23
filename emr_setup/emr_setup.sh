@@ -10,8 +10,6 @@ S3_BUCKET_NAME=weatheranalysistransient
 mkdir weatheranalysis
 cd weatheranalysis
 
-sudo yum install -y git
-
 wget https://archive.apache.org/dist/kafka/2.6.1/kafka_2.12-2.6.1.tgz
 tar xzf kafka_2.12-2.6.1.tgz
 sudo mv -f kafka_2.12-2.6.1 /opt

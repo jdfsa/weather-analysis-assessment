@@ -1,5 +1,10 @@
-target/
+dataset-hadoop/spec/
+
+# intellij
 .idea/
+
+# java binaries
+target/
 
 # Compiled class file
 *.class

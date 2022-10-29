@@ -23,6 +23,8 @@ export PATH=$PATH:${FLUME_HOME}/bin
 /opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic weather-data-description
 /opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic weather-data-wind-direction
 /opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic weather-data-wind-speed
+/opt/kafka/bin/kafka-topics.sh --zookeeper localhost:2181 --list | grep weather
+
 
 # copy systemd services
 sudo cp ./services/*.service /etc/systemd/system

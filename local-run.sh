@@ -1,3 +1,28 @@
+# spark on docker
+# https://github.com/Marcel-Jan/docker-hadoop-spark
+# https://dev.to/mvillarrealb/creating-a-spark-standalone-cluster-with-docker-and-docker-compose-2021-update-6l4
+
+# hdfs: preparing hadoop docker ----------------
+docker cp dataset-hadoop namenode:/home/dataset
+docker exec -it namenode bash
+cd /home/dataset
+hdfs dfs -copyFromLocal ./ /user/custom/weather_data/raw/
+hdfs dfs -ls /user/custom/weather_data/raw/
+
+docker cp ./target/sparkbatchprocessing-0.0.1.jar namenode:/home
+docker exec -t namenode hdfs dfs -copyFromLocal /home/sparkbatchprocessing-0.0.1.jar /home
+docker exec -it spark-master /spark/bin/spark-submit --class App --deploy-mode cluster --master spark://spark-master:7077 hdfs://nodename:9000/home/sparkbatchprocessing-0.0.1.jar
+
+# ------------------
+
+# spark ------------
+docker exec -it spark-masterbash
+spark/bin/spark-shell --master spark://spark-master:7077
+# ------------------
+
+
+# kafka ingestion --------------------------
+
 docker exec --interactive --tty broker kafka-console-consumer --bootstrap-server broker:9092 --topic weather-publisher-data --from-beginning
 docker exec --interactive --tty broker kafka-console-consumer --bootstrap-server broker:9092 --topic weather-data-description --from-beginning
 docker exec --interactive --tty broker kafka-console-consumer --bootstrap-server broker:9092 --topic weather-data-city-attributes --from-beginning

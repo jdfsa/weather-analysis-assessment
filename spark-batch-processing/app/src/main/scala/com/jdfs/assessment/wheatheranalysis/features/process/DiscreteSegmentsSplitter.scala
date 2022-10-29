@@ -14,20 +14,20 @@ case object DiscreteSegmentsSplitter {
 
   private def monthGroupedData(df: DataFrame): DataFrame = {
     val dfTotal = df
-      .groupBy("country", "month")
+      .groupBy("city", "month")
       .agg(count("month").as("total_month"))
 
     val dfDescription = df
-      .groupBy("country", "month", "value")
+      .groupBy("city", "month", "value")
       .agg(count("value").alias("total_description"))
 
     dfDescription
-      .join(dfTotal, dfDescription("country").equalTo(dfTotal("country")) &&
+      .join(dfTotal, dfDescription("city").equalTo(dfTotal("city")) &&
         dfDescription("month").equalTo(dfTotal("month")), "inner")
       .withColumn("percent", round(col("total_description")
         .divide(col("total_month")).multiply(lit(100)), 4))
       .select(
-        dfDescription("country"),
+        dfDescription("city"),
         dfDescription("month"),
         col("value").as("description"),
         col("total_description").as("total"),
@@ -38,20 +38,20 @@ case object DiscreteSegmentsSplitter {
 
   private def dailyGroupedData(df: DataFrame): DataFrame = {
     val dfTotal = df
-    .groupBy("country", "date")
+    .groupBy("city", "date")
     .agg(count("month").as("total_date"))
 
     val dfDescription = df
-    .groupBy("country", "date", "value")
+    .groupBy("city", "date", "value")
     .agg(count("value").alias("total_description"))
 
     dfDescription
-      .join(dfTotal, dfDescription("country").equalTo(dfTotal("country")) &&
+      .join(dfTotal, dfDescription("city").equalTo(dfTotal("city")) &&
         dfDescription("date").equalTo(dfTotal("date")), "inner")
       .withColumn("percent", round(col("total_description")
         .divide(col("total_date")).multiply(lit(100)), 4))
       .select(
-        dfDescription("country"),
+        dfDescription("city"),
         dfDescription("date"),
         col("value").as("description"),
         col("total_description").as("total"),
@@ -62,20 +62,20 @@ case object DiscreteSegmentsSplitter {
 
   private def timeIntervalGroupedData(df: DataFrame): DataFrame = {
     val dfTotal = df
-      .groupBy("country", "interval")
+      .groupBy("city", "interval")
       .agg(count("interval").as("total_interval"))
 
     val dfDescription = df
-      .groupBy("country", "interval", "value")
+      .groupBy("city", "interval", "value")
       .agg(count("value").alias("total_description"))
 
     dfDescription
-      .join(dfTotal, dfDescription("country").equalTo(dfTotal("country")) &&
+      .join(dfTotal, dfDescription("city").equalTo(dfTotal("city")) &&
         dfDescription("interval").equalTo(dfTotal("interval")), "inner")
       .withColumn("percent", round(col("total_description")
         .divide(col("total_interval")).multiply(lit(100)), 4))
       .select(
-        dfDescription("country"),
+        dfDescription("city"),
         dfDescription("interval"),
         col("value").as("description"),
         col("total_description").as("total"),

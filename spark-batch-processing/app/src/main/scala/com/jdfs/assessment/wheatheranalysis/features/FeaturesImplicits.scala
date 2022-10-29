@@ -1,6 +1,7 @@
 package com.jdfs.assessment.wheatheranalysis.features
 
-import com.jdfs.assessment.wheatheranalysis.features.out.HdfsSpecsWriter.writeSpec
+import com.jdfs.assessment.wheatheranalysis.features.out.HdfsSpecsWriter.writeSpecHdfs
+import com.jdfs.assessment.wheatheranalysis.features.out.MongoSpecsWriter.writeSpecMongoDb
 import com.jdfs.assessment.wheatheranalysis.features.process.CitiesDataFormatter.citiesFormat
 import com.jdfs.assessment.wheatheranalysis.features.process.ContinousSegmentsSplitter.groupedContinousData
 import com.jdfs.assessment.wheatheranalysis.features.process.DiscreteSegmentsSplitter.groupedDiscreteData
@@ -11,6 +12,13 @@ object FeaturesImplicits {
     def weatherToCitiesFormat(): DataFrame = citiesFormat(df)
     def weatherToContinousGroups(): Map[String, DataFrame] = groupedContinousData(df)
     def weatherToDiscreteGroups(): Map[String, DataFrame] = groupedDiscreteData(df)
-    def weatherWriteSpecData(path: String): Unit = writeSpec(df, path)
+    def writeToSpecHdfs(path: String): DataFrame = {
+      writeSpecHdfs(df, path)
+      df
+    }
+    def writeToSpecMongoDb(tableName: String): DataFrame = {
+      writeSpecMongoDb(df, tableName)
+      df
+    }
   }
 }

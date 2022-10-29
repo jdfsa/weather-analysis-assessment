@@ -5,10 +5,10 @@ import org.apache.spark.sql.{DataFrame, SaveMode}
 
 case object HdfsSpecsWriter {
 
-  def writeSpec(df: DataFrame, path: String): Unit = {
+  def writeSpecHdfs(df: DataFrame, path: String): Unit = {
     df.write.format("parquet")
       .mode(SaveMode.Overwrite)
-      .partitionBy("country")
+      .partitionBy("city")
       .save(s"$BASE_CSV_RAW_PATH/spec$path")
   }
 }

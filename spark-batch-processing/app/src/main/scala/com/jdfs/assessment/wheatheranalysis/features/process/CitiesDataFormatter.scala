@@ -49,7 +49,7 @@ case object CitiesDataFormatter {
         |'Haifa',`Haifa`,
         |'Nahariyya',`Nahariyya`,
         |'Jerusalem',`Jerusalem`
-        |) as (country, value)""").stripMargin))
+        |) as (city, value)""").stripMargin))
     .withColumn("date", split(col("datetime"), " ").getItem(0))
     .withColumn("month", date_format(to_date(col("datetime"), "yyyy-MM-dd HH:mm:ss"), "MMMM"))
     .withColumn("time", split(col("datetime"), " ").getItem(1))

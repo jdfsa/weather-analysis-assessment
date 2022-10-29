@@ -13,13 +13,13 @@ case object ContinousSegmentsSplitter {
     )
 
   private def monthGroupedData(df: DataFrame): DataFrame =
-    df.groupBy("country", "month").weatherAggregate()
+    df.groupBy("city", "month").weatherAggregate()
 
   private def dailyGroupedData(df: DataFrame): DataFrame =
-    df.groupBy("country", "date").weatherAggregate()
+    df.groupBy("city", "date").weatherAggregate()
 
   private def timeIntervalGroupedData(df: DataFrame): DataFrame =
-    df.groupBy("country", "interval").weatherAggregate()
+    df.groupBy("city", "interval").weatherAggregate()
 
   private implicit class AggregationsImplicits(df: RelationalGroupedDataset) {
     def weatherAggregate(): DataFrame = df.agg(

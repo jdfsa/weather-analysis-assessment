@@ -2,6 +2,12 @@
 # https://github.com/Marcel-Jan/docker-hadoop-spark
 # https://dev.to/mvillarrealb/creating-a-spark-standalone-cluster-with-docker-and-docker-compose-2021-update-6l4
 
+
+# docker mongo db -----------
+docker pull mongo:latest
+docker run -d -p 27017:27017 --name mongodb mongo:latest
+docker exec -it mongodb mongosh
+
 # hdfs: preparing hadoop docker ----------------
 docker cp dataset-hadoop namenode:/home/dataset
 docker exec -it namenode bash

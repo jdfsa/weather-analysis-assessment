@@ -15,18 +15,24 @@ object LocalApp {
 
     val basePathCurrentDate = "2022/10/26"
 
-    spark.sparkContext.parallelize(Seq("humidity", "pressure", "temperature", "wind_direction", "wind_speed"))
-      .foreach(src => {
-        readRawCsv(s"/$src/$basePathCurrentDate/$src.csv")
-          .weatherCitiesFormat().weatherSplitGroups()
-          .foreach(item => item._2.weatherSaveSpecData(s"/$src/$basePathCurrentDate/${item._1}"))
-      })
-
-    val weatherDescriptionDf = readRawCsv(s"/weather_description/$basePathCurrentDate/weather_description.csv")
-      .weatherCitiesFormat().weatherSplitGroups()
-
-    val cityAttributesDf = readRawCsv(s"/city_attributes/$basePathCurrentDate/city_attributes.csv")
+    // city attributes
+    readRawCsv(s"/city_attributes/$basePathCurrentDate/city_attributes.csv")
       .toDF("City","Country","Latitude","Longitude")
+      .weatherWriteSpecData(s"/city_attributes/$basePathCurrentDate/")
 
+    // weather description
+    readRawCsv(s"/weather_description/$basePathCurrentDate/weather_description.csv")
+      .weatherToCitiesFormat()
+      .weatherToDiscreteGroups()
+      .foreach(item => item._2.weatherWriteSpecData(s"/weather_description/$basePathCurrentDate/${item._1}"))
+
+    // other data
+    spark.sparkContext.parallelize(Seq(
+      "humidity", "pressure", "temperature", "wind_direction", "wind_speed")
+    ).foreach(src => {
+        readRawCsv(s"/$src/$basePathCurrentDate/$src.csv")
+          .weatherToCitiesFormat().weatherToContinousGroups()
+          .foreach(item => item._2.weatherWriteSpecData(s"/$src/$basePathCurrentDate/${item._1}"))
+      })
   }
 }

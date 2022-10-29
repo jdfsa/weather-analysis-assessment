@@ -1,16 +1,16 @@
-package com.jdfs.assessment.wheatheranalysis.features
+package com.jdfs.assessment.wheatheranalysis.features.process
 
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 
-case object DtParser {
+case object CitiesDataFormatter {
 
-  def detailsDataFrame(df: DataFrame): DataFrame = df
-    .toDF("datetime","Vancouver","Portland","San Francisco","Seattle","Los Angeles","San Diego",
-      "Las Vegas","Phoenix","Albuquerque","Denver","San Antonio","Dallas","Houston","Kansas City","Minneapolis",
-      "Saint Louis","Chicago","Nashville","Indianapolis","Atlanta","Detroit","Jacksonville","Charlotte","Miami",
-      "Pittsburgh","Toronto","Philadelphia","New York","Montreal","Boston","Beersheba","Tel Aviv District","Eilat",
-      "Haifa","Nahariyya","Jerusalem")
+  def citiesFormat(df: DataFrame): DataFrame = df
+    .toDF("datetime", "Vancouver", "Portland", "San Francisco", "Seattle", "Los Angeles", "San Diego",
+      "Las Vegas", "Phoenix", "Albuquerque", "Denver", "San Antonio", "Dallas", "Houston", "Kansas City", "Minneapolis",
+      "Saint Louis", "Chicago", "Nashville", "Indianapolis", "Atlanta", "Detroit", "Jacksonville", "Charlotte", "Miami",
+      "Pittsburgh", "Toronto", "Philadelphia", "New York", "Montreal", "Boston", "Beersheba", "Tel Aviv District", "Eilat",
+      "Haifa", "Nahariyya", "Jerusalem")
     .select(col("datetime"), expr(Predef.augmentString(
       """stack(36,
         |'Vancouver',`Vancouver`,

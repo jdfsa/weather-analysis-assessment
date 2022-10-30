@@ -1,13 +1,12 @@
 package com.jdfs.assessment.wheatheranalysis.features.in
 
-import com.jdfs.assessment.wheatheranalysis.LocalApp.spark
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
-case object CsvReader {
+class CsvReader(sparkSession: SparkSession) {
 
   def readRawCsv(path: String): DataFrame = {
-    val fullpath = s"${spark.conf.get("weatherapp.hdfs.base_path")}/raw$path"
-    spark.read.option("header", "false").option("charset", "UTF-8")
+    val fullpath = s"${sparkSession.conf.get("weatherapp.hdfs.base_path")}/raw$path"
+    sparkSession.read.option("header", "false").option("charset", "UTF-8")
       .csv(fullpath)
   }
 

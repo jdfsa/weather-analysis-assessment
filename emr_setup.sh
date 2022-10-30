@@ -11,6 +11,7 @@ wget https://dlcdn.apache.org/flume/1.10.1/apache-flume-1.10.1-bin.tar.gz
 tar xzf apache-flume-1.10.1-bin.tar.gz
 sudo mv -f apache-flume-1.10.1-bin /opt
 sudo ln -s apache-flume-1.10.1-bin /opt/flume
+sudo cp ./flume_setup/log4j2.xml /opt/flume/conf
 export FLUME_HOME=/opt/flume
 export PATH=$PATH:${FLUME_HOME}/bin
 
@@ -34,10 +35,8 @@ sudo systemctl daemon-reload
 sudo systemctl start kafkastreamprocessor.service
 sudo systemctl status kafkastreamprocessor.service
 
-# starting flume TO DO
-sudo chmod u+x /home/ec2-user/weatheranalysis/flume_setup/agent-run.sh
-/home/ec2-user/weatheranalysis/flume_setup/agent-run.sh
-#sudo -u hdfs hadoop fs -mkdir -p /user/custom
-#sudo -u hdfs hadoop fs -chmod 777 /user/custom
+# starting flume
+sudo chmod u+x ./flume_setup/agent-run.sh
+./flume_setup/agent-run.sh
 #sudo systemctl start weather-ingestion-flume-agent.service
 #sudo systemctl status weather-ingestion-flume-agent.service

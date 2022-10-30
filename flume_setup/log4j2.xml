@@ -18,7 +18,7 @@
 -->
 <Configuration status="ERROR">
   <Properties>
-    <Property name="LOG_DIR">.</Property>
+    <Property name="LOG_DIR">/var/logs/flume</Property>
   </Properties>
   <Appenders>
     <Console name="Console" target="SYSTEM_ERR">

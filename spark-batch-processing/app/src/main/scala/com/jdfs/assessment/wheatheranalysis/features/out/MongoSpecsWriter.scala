@@ -6,8 +6,9 @@ import org.apache.spark.sql.{DataFrame, SaveMode}
 case object MongoSpecsWriter {
 
   def writeSpecMongoDb(df: DataFrame, tableName: String): Unit = {
+    val mongoConn = s"${df.sparkSession.conf.get("weatherapp.mongodb.base_connection")}.$tableName"
     df.write.format("com.mongodb.spark.sql.DefaultSource")
-      .option("spark.mongodb.output.uri", s"mongodb://127.0.0.1:27017/weather.$tableName")
+      .option("spark.mongodb.output.uri", mongoConn)
       .option("spark.mongodb.operationType", "replace")
       .option("spark.mongodb.idFieldList", fieldListByTableName(tableName))
       .mode(SaveMode.Append)

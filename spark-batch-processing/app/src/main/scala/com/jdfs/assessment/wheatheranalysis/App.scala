@@ -29,7 +29,6 @@ object App {
       .weatherWriteToSpecHdfs(s"/city_attributes/$basePathCurrentDate/")
       .writeToSpecMongoDb("city_attributes")
 
-
     // weather description
     csvReader.readRawCsv(s"/weather_description/$basePathCurrentDate/")
       .weatherToCitiesFormat()

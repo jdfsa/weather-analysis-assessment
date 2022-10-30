@@ -7,10 +7,10 @@ export KAFKA_HOME=/opt/kafka
 export PATH=$PATH:${KAFKA_HOME}/bin
 /opt/kafka/bin/kafka-server-start.sh -daemon /opt/kafka/config/server.properties
 
-wget https://dlcdn.apache.org/flume/1.10.1/apache-flume-1.10.1-bin.tar.gz
-tar xzf apache-flume-1.10.1-bin.tar.gz
-sudo mv -f apache-flume-1.10.1-bin /opt
-sudo ln -s apache-flume-1.10.1-bin /opt/flume
+wget https://dlcdn.apache.org/flume/1.11.0/apache-flume-1.11.0-bin.tar.gz
+tar xzf apache-flume-1.11.0-bin.tar.gz
+sudo mv -f apache-flume-1.11.0-bin /opt
+sudo ln -s apache-flume-1.11.0-bin /opt/flume
 sudo cp ./flume_setup/log4j2.xml /opt/flume/conf
 export FLUME_HOME=/opt/flume
 export PATH=$PATH:${FLUME_HOME}/bin

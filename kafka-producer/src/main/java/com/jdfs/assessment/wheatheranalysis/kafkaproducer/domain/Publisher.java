@@ -9,6 +9,5 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 public class Publisher implements Serializable {
     private final String source;
-    private final String headers;
     private final String content;
 }

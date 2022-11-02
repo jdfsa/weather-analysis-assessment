@@ -29,10 +29,13 @@ class CsvProcessorService implements ProcessCsvUseCase {
                 BufferedReader reader = Files.newBufferedReader(csvFilePath)
         ) {
             final String sourceName = csvFilePath.toFile().getName().replace(".csv", "");
-            final String csvHeader = reader.readLine();
+
+            // skip header
+            reader.readLine();
+
             String csvLine = null;
             while ((csvLine = reader.readLine()) != null) {
-                final Publisher publisher = new Publisher(sourceName, csvHeader, csvLine);
+                final Publisher publisher = new Publisher(sourceName, csvLine);
                 postTopicPort.postTopic(publisher);
             }
         }

@@ -20,6 +20,11 @@ object LocalApp {
         .getOrElse("s3a://weatheranalysisdata"))
       .config("weatherapp.mongodb.base_connection", argsMap.get("weatherapp.mongodb.base_connection")
         .getOrElse("mongodb://127.0.0.1:27017/weather"))
+      .config("weatherapp.mongodb.ssl", argsMap.get("weatherapp.mongodb.ssl").getOrElse(""))
+      .config("weatherapp.mongodb.tls_ca_file", argsMap.get("weatherapp.mongodb.tls_ca_file").getOrElse(""))
+      .config("weatherapp.mongodb.replicaSet", argsMap.get("weatherapp.mongodb.replicaSet").getOrElse(""))
+      .config("weatherapp.mongodb.readPreference", argsMap.get("weatherapp.mongodb.readPreference").getOrElse(""))
+      .config("weatherapp.mongodb.retryWrites", argsMap.get("weatherapp.mongodb.retryWrites").getOrElse(""))
       .config("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
       .getOrCreate
     val csvReader = new CsvReader(spark)
@@ -31,8 +36,8 @@ object LocalApp {
     // city attributes
     csvReader.readRawCsv(s"/city_attributes/$basePathCurrentDate/city_attributes.csv")
       .toDF("City","Country","Latitude","Longitude")
-      .weatherWriteToSpecHdfs(s"/city_attributes/$basePathCurrentDate/")
       .writeToSpecMongoDb("city_attributes")
+      .weatherWriteToSpecHdfs(s"/city_attributes/$basePathCurrentDate/")
 
     // weather description
     csvReader.readRawCsv(s"/weather_description/$basePathCurrentDate/weather_description.csv")

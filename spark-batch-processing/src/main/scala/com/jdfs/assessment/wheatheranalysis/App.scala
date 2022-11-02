@@ -6,6 +6,7 @@ import org.apache.spark.sql.SparkSession
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import scala.util.Properties
 
 object App {
 
@@ -17,6 +18,11 @@ object App {
       .config("weatherapp.hdfs.base_path", argsMap.get("weatherapp.hdfs.base_path").get)
       .config("weatherapp.s3.base_path", argsMap.get("weatherapp.s3.base_path").get)
       .config("weatherapp.mongodb.base_connection", argsMap.get("weatherapp.mongodb.base_connection").get)
+      .config("weatherapp.mongodb.ssl", argsMap.get("weatherapp.mongodb.ssl").getOrElse(""))
+      .config("weatherapp.mongodb.tls_ca_file", argsMap.get("weatherapp.mongodb.tls_ca_file").getOrElse(""))
+      .config("weatherapp.mongodb.replicaSet", argsMap.get("weatherapp.mongodb.replicaSet").getOrElse(""))
+      .config("weatherapp.mongodb.readPreference", argsMap.get("weatherapp.mongodb.readPreference").getOrElse(""))
+      .config("weatherapp.mongodb.retryWrites", argsMap.get("weatherapp.mongodb.retryWrites").getOrElse(""))
       .config("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
       .getOrCreate
     val csvReader = new CsvReader(spark)

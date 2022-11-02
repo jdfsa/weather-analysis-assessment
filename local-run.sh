@@ -9,9 +9,13 @@ docker run -d -p 27017:27017 --name mongodb mongo:latest
 docker exec -it mongodb mongosh
 
 # spark-batch-processing
+export AWS_ACCESS_KEY_ID=XXXXXXXXXXXXXX
+export AWS_SECRET_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+cd /mnt/c/Users/jacqu/git/weather-analysis-assessment
 spark-submit --class com.jdfs.assessment.wheatheranalysis.App ./spark-batch-processing/target/sparkbatchprocessing-0.0.1-jar-with-dependencies.jar \
 --spark_master=local[*] \
 --weatherapp.hdfs.base_path=file:///mnt/c/Users/jacqu/git/weather-analysis-assessment/dataset-hadoop \
+--weatherapp.s3.base_path=s3a://weatheranalysisdata \
 --weatherapp.mongodb.base_connection=mongodb://127.0.0.1:27017/weather \
 --weatherapp.reference_date=2022-10-26
 

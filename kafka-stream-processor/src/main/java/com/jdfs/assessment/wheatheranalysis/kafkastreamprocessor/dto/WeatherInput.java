@@ -11,6 +11,5 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherInput implements Serializable {
     private String source;
-    private String headers;
     private String content;
 }

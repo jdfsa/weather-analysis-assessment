@@ -16,8 +16,11 @@ object LocalApp {
       .master(argsMap.get("spark_master").getOrElse("local[*]"))
       .config("weatherapp.hdfs.base_path", argsMap.get("weatherapp.hdfs.base_path")
         .getOrElse("file:///C:/Users/jacqu/git/weather-analysis-assessment/dataset-hadoop"))
+      .config("weatherapp.s3.base_path", argsMap.get("weatherapp.s3.base_path")
+        .getOrElse("s3a://weatheranalysisdata"))
       .config("weatherapp.mongodb.base_connection", argsMap.get("weatherapp.mongodb.base_connection")
         .getOrElse("mongodb://127.0.0.1:27017/weather"))
+      .config("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
       .getOrCreate
     val csvReader = new CsvReader(spark)
 

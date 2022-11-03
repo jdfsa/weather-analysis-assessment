@@ -6,7 +6,6 @@ import org.apache.spark.sql.SparkSession
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import scala.util.Properties
 
 object App {
 
@@ -25,6 +24,12 @@ object App {
       .config("weatherapp.mongodb.retryWrites", argsMap.get("weatherapp.mongodb.retryWrites").getOrElse(""))
       .config("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
       .getOrCreate
+
+    val processOnly = (
+      if (argsMap.get("weatherapp.process_only").isEmpty) Array[String]()
+      else argsMap.get("weatherapp.process_only").get.split(",")
+      ).toList
+
     val csvReader = new CsvReader(spark)
 
     val basePathCurrentDate = argsMap.get("weatherapp.reference_date")
@@ -32,23 +37,28 @@ object App {
       .replace("-", "/")
 
     // city attributes
-    csvReader.readRawCsv(s"/city_attributes/$basePathCurrentDate/")
-      .toDF("City","Country","Latitude","Longitude")
-      .weatherWriteToSpecHdfs(s"/city_attributes/$basePathCurrentDate/")
-      .writeToSpecMongoDb("city_attributes")
+    if (processOnly.isEmpty || processOnly.contains("city_attributes")) {
+      csvReader.readRawCsv(s"/city_attributes/$basePathCurrentDate/")
+        .toDF("City", "Country", "Latitude", "Longitude")
+        .weatherWriteToSpecHdfs(s"/city_attributes/$basePathCurrentDate/")
+        .writeToSpecMongoDb("city_attributes")
+    }
 
     // weather description
-    csvReader.readRawCsv(s"/weather_description/$basePathCurrentDate/")
-      .weatherToCitiesFormat()
-      .weatherToDiscreteGroups()
-      .foreach(item => item._2
-        .weatherWriteToSpecHdfs(s"/weather_description/$basePathCurrentDate/${item._1}")
-        .writeToSpecMongoDb(s"weather_description_${item._1}"))
+    if (processOnly.isEmpty || processOnly.contains("weather_description")) {
+      csvReader.readRawCsv(s"/weather_description/$basePathCurrentDate/")
+        .weatherToCitiesFormat()
+        .weatherToDiscreteGroups()
+        .foreach(item => item._2
+          .weatherWriteToSpecHdfs(s"/weather_description/$basePathCurrentDate/${item._1}")
+          .writeToSpecMongoDb(s"weather_description_${item._1}"))
+    }
 
     // other data
-    spark.sparkContext.parallelize(Seq(
-      "humidity", "pressure", "temperature", "wind_direction", "wind_speed")
-    ).foreach(src => {
+    val seqProcess = Seq("humidity", "pressure", "temperature", "wind_direction", "wind_speed")
+      .filter(item => processOnly.isEmpty || processOnly.contains(item))
+
+    spark.sparkContext.parallelize(seqProcess).foreach(src => {
       csvReader.readRawCsv(s"/$src/$basePathCurrentDate/")
         .weatherToCitiesFormat().weatherToContinousGroups()
         .foreach(item => item._2

@@ -6,6 +6,7 @@ case object S3SpecsWriter {
 
   def writeSpecS3(df: DataFrame, path: String): Unit = {
     val fullpath = s"${df.sparkSession.conf.get("weatherapp.s3.base_path")}/spec$path"
+    println(f"WRITE S3: $fullpath")
     df.write.format("parquet")
       .mode(SaveMode.Overwrite)
       .partitionBy("city")

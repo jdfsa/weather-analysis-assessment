@@ -6,6 +6,7 @@ case object HdfsSpecsWriter {
 
   def writeSpecHdfs(df: DataFrame, path: String): Unit = {
     val fullpath = s"${df.sparkSession.conf.get("weatherapp.hdfs.base_path")}/spec$path"
+    println(f"WRITE HDFS: $fullpath")
     df.write.format("parquet")
       .mode(SaveMode.Overwrite)
       .partitionBy("city")

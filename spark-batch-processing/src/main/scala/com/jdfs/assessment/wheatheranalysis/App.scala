@@ -57,7 +57,6 @@ object App {
     // other data
     val seqProcess = Seq("humidity", "pressure", "temperature", "wind_direction", "wind_speed")
       .filter(item => processOnly.isEmpty || processOnly.contains(item))
-
     spark.sparkContext.parallelize(seqProcess).foreach(src => {
       csvReader.readRawCsv(s"/$src/$basePathCurrentDate/")
         .weatherToCitiesFormat().weatherToContinousGroups()

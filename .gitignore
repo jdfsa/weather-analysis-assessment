@@ -1,4 +1,5 @@
 dataset-hadoop/spec/
+dataset-s3/
 
 # intellij
 .idea/

@@ -18,7 +18,7 @@ You will find in the repo the following contents:
 * **kafka-producer**: is the application used to send csv data "as is" to kafka topic
 * **kafka-stream-processor**: application responsible for reading the source topic, cleaning data by removing records having null/empty values, and sending to a specific kafka topic according to its origin
 * **flume_setup**: containg all files to setup flume agent locally; the agent will grab all stream data from kafka topics and write to HDFS as CSV raw format
-* **spark-batch-processing**: application responsible for reading CSV raw format files stored in HDFS, generating an specialized view by transforming them as required in the project, and write to three destinations:
+* **spark-batch-processing**: application responsible for reading CSV raw format files stored in HDFS, generating a specialized view by transforming them as required in the project, and write to three destinations:
     * HDFS
     * S3
     * DocumentDB
